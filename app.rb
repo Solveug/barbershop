@@ -3,10 +3,11 @@ require 'sinatra'
 require 'sinatra/reloader'
 
 get '/' do
-	erb "Hello! <a href=\"https://github.com/bootstrap-ruby/sinatra-bootstrap\">Original</a> pattern has been modified for <a href=\"http://rubyschool.us/\">Ruby School</a>"
+	erb :index
 end
 
 get '/about' do
+  #@error = 'Ошибка!'
 	erb :about
 end
 
@@ -15,15 +16,47 @@ get '/visit' do
 end
 
 post '/visit' do
-  @user_name = params[:user_name]
+  @username = params[:username]
   @phone = params[:phone]
   @datetime = params[:datetime]
   @barber = params[:barber]
   @color = params[:color]
 
-  erb "OK, username is #{@username}, #{@phone}, #{@datetime}, #{@barber}, #{@color}"
+  hh = {:username => 'Введите имя',
+      :phone => 'Введите телефон',
+      :datetime => 'Введите дату и время'}
+
+  @error = hh.select {|key,_| params[key] == ""}.values.join(", ")
+
+  if @error != ''
+    return erb :visit
+  end
+
+  erb "#{@username}, контактный телефон: #{@phone}, вы записались: #{@datetime}, к #{@barber} и выбрали цвет: #{@color}"
 end
 
 get '/contacts' do
   erb :contacts
 end
+
+# def under_construction
+#   @title = 'Under construction'
+#   @message = 'This page is under construction'
+
+#   erb :message
+# end
+
+# post '/' do
+#   @login = params[:login]
+#   @pasword = params[:pasword]
+
+#   if @login == 'admin' && @pasword == 'secret'
+#     erb :welcome
+#   elsif @login == 'admin' && @pasword == 'admin'
+#     @message = 'Nise try! Access denied'
+#     erb :index
+#   else
+#     @message = 'Access denied'
+#     erb :index
+#   end
+#  end
