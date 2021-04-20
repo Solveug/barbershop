@@ -85,3 +85,7 @@
 .simplecolorpicker span.vr {
   border-left: 1px solid #222; /* @gray-dark */
 }
+
+#datetime-local {
+width: 30%;
+}

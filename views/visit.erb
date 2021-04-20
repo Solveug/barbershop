@@ -25,7 +25,14 @@ $(function() {
 
   <div>
     <label for="datetime-local">Выберите дату и время записи</label>
-    <input  name="datetime" type="datetime-local" id="datetime-local" placeholder="Введите дату и время" value="<%= @datetime%>">
+    <!-- TODO FIX -->
+    <style type="text/css">
+       #datetime-local{
+        width: 40%;
+    }
+    /*END*/
+  </style>
+    <input  class= "form-control" name="datetime" type="datetime-local" id="datetime-local" placeholder="Введите дату и время" value="<%= @datetime%>">
   </div>
   <br>
 

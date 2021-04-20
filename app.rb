@@ -65,8 +65,18 @@ post '/visit' do
 
 end
 
-
-
 get '/contacts' do
   erb :contacts
+end
+
+get '/showusers' do
+ @arr = '<style type="text/css">.row_line{color:red}</style>'
+  db = get_db
+  db.results_as_hash = true
+   db.execute 'select * from Users' do |row|
+     @arr << "<style type='text/css'>.row_line_#{row['id']}{color:#{row['color']}}</style>"
+     @arr << "<li> #{row['id']}, #{row['username']}, #{row['phone']}, comin in #{row['datestamp']} to #{row['barber']} and want to paint in <text class ='row_line_#{row['id']}'>#{row['color']}</text> </li>\n"
+   end
+
+  erb :showusers
 end
