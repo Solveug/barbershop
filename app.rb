@@ -3,15 +3,18 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sqlite3'
 
+def get_db
+  return SQLite3::Database.new 'barbershop.db'
+end
+
 configure do
-  @db = SQLite3::Database.new 'barbershop.db'
-  @db.execute 'CREATE TABLE IF NOT EXISTS
-  "Users"
+  db = get_db
+  db.execute 'CREATE TABLE IF NOT EXISTS "Users"
   (
   "id"  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
   "username"  TEXT,
   "phone" TEXT,
-  "darestamp" TEXT,
+  "datestamp" TEXT,
   "barber"  TEXT,
   "color" TEXT
   )'
@@ -22,7 +25,6 @@ get '/' do
 end
 
 get '/about' do
-  #@error = 'Ошибка!'
 	erb :about
 end
 
@@ -47,31 +49,24 @@ post '/visit' do
     return erb :visit
   end
 
-  erb "#{@username}, контактный телефон: #{@phone}, вы записались: #{@datetime}, к #{@barber} и выбрали цвет: #{@color}"
+  db = get_db
+  db.execute "insert into
+    'Users'
+    (
+      username,
+      phone,
+      datestamp,
+      barber,
+      color
+    )
+    values (?, ?, ?, ?, ?)", [@username, @phone, @datetime, @barber, @color]
+
+  erb "OK, username is #{@username}, #{@phone}, #{@datetime}, #{@barber}, #{@color}"
+
 end
+
+
 
 get '/contacts' do
   erb :contacts
 end
-
-# def under_construction
-#   @title = 'Under construction'
-#   @message = 'This page is under construction'
-
-#   erb :message
-# end
-
-# post '/' do
-#   @login = params[:login]
-#   @pasword = params[:pasword]
-
-#   if @login == 'admin' && @pasword == 'secret'
-#     erb :welcome
-#   elsif @login == 'admin' && @pasword == 'admin'
-#     @message = 'Nise try! Access denied'
-#     erb :index
-#   else
-#     @message = 'Access denied'
-#     erb :index
-#   end
-#  end

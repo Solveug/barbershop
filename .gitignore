@@ -4,3 +4,4 @@ barbershop.db
 test.sqlite-journal
 test.sqlite
 test.db
+.barbershop.db
