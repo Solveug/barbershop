@@ -7,6 +7,18 @@ def get_db
   return SQLite3::Database.new 'barbershop.db'
 end
 
+def is_barber_exists? db, name
+  db.execute('select * from Barbers where name=?', [name]).length > 0
+end
+
+def seed_db db, barbers
+  barbers.each do |barber|
+    if !is_barber_exists? db, barber
+      db.execute 'insert into Barbers (name) values (?)', [barber]
+    end
+  end
+end
+
 configure do
   db = get_db
   db.execute 'CREATE TABLE IF NOT EXISTS "Users"
@@ -18,6 +30,12 @@ configure do
   "barber"  TEXT,
   "color" TEXT
   )'
+
+  db.execute 'CREATE TABLE IF NOT EXISTS "Barbers"
+    ("id"  INTEGER NOT NULL PRIMARY KEY AUTOINCREMENT,
+    "name"  TEXT)'
+
+    seed_db db, ['Jessie Pinkman', 'Walter White', 'Gus Fring', 'Mike Shinoda']
 end
 
 get '/' do
@@ -78,6 +96,7 @@ get '/showusers' do
  #     @arr << "<style type='text/css'>.row_line_#{row['id']}{color:#{row['color']}}</style>"
  #     @arr << "<li> #{row['id']}, #{row['username']}, #{row['phone']}, comin in #{row['datestamp']} to #{row['barber']} and want to paint in <text class ='row_line_#{row['id']}'>#{row['color']}</text> </li>\n"
  #   end
+
 
   db = get_db
   db.results_as_hash = true
