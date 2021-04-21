@@ -3,10 +3,6 @@ require 'sinatra'
 require 'sinatra/reloader'
 require 'sqlite3'
 
-def get_db
-  return SQLite3::Database.new 'barbershop.db'
-end
-
 def is_barber_exists? db, name
   db.execute('select * from Barbers where name=?', [name]).length > 0
 end
@@ -17,6 +13,17 @@ def seed_db db, barbers
       db.execute 'insert into Barbers (name) values (?)', [barber]
     end
   end
+end
+
+def get_db
+  db = SQLite3::Database.new 'barbershop.db'
+  db.results_as_hash = true
+  return db
+end
+
+before do
+  db = get_db
+  @barbers = db.execute 'select * from Barbers'
 end
 
 configure do
@@ -99,7 +106,6 @@ get '/showusers' do
 
 
   db = get_db
-  db.results_as_hash = true
   @results = db.execute 'select * from Users order by id desc'
 
   erb :showusers
